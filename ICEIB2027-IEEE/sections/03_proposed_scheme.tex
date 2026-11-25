@@ -1,0 +1,49 @@
+\section{Proposed Scheme}
+\input{figures/architecture}
+
+\subsection{Data Preparation and Targets}
+The input is the Freeway Bureau's M05A ETC dataset, which publishes inter-station speeds by vehicle type \cite{fwbm05a}. The analysis uses passenger-car records at five-minute resolution. The data catalog labels the reported measure as median operating speed. The aggregation convention for the exact archived files used in the preliminary experiment still needs to be reconciled with the corresponding data specification.
+
+For each directional segment, a record with zero speed and zero volume is treated as missing. In the nine sampled days reported in the source study, 98.7--100\% of zero-speed records also had zero volume. This check supports retaining an explicit missing-data indicator. The forecast uses the most recent 12 five-minute observations, volume, time of day, day type, and position within a holiday period. Queries with stale or insufficient recent data return an explanation of the data gap.
+
+Let \(v_{s,t}\) be an observed speed on segment \(s\) at time \(t\), and let \(h\in\{15,30,60\}\) be the forecast horizon in minutes. The speed model predicts \(\hat v_{s,t+h}\). The Freeway Bureau uses 40~km/h in its half-hour congestion reporting \cite{fwb2026holiday}. We apply the threshold at five-minute resolution for early warning. The onset target is
+\begin{equation}
+y_{s,t,h} = \mathbf{1}\{v_{s,t}\geq40,\ v_{s,t+h}<40\}.
+\label{eq:onset}
+\end{equation}
+The target is evaluated where the relevant observations are valid. The project design uses histogram-based gradient boosting for separate speed regression and congestion-risk classification, with isotonic calibration for the classification scores. The binary target in \eqref{eq:onset} measures a transition into congestion. A calibrated congestion-risk score and a validated onset alert are distinct outputs.
+
+\subsection{Agent Workflow}
+Fig.~\ref{fig:architecture} shows the five modules. The interface collects the route, direction, and requested time. The agent checks coverage and required fields before calling the forecast engine and notice retriever. The data module prepares M05A observations for the engine. The knowledge base indexes official notices and retrieves those that match the route, direction, and applicable dates. For a current trip, the design also attaches available incident information with its timestamp.
+
+The decision rule ranks candidate near-term departure options by forecast congestion risk. The response includes the supporting forecast and any applicable restrictions and limitations. The route-level risk aggregation and the effect of waiting will be verified before deploying the recommendations. When the request lacks sufficient detail, the agent asks a follow-up question. The language model writes the response from structured tool outputs, and a deterministic check verifies its numeric claims. If the check fails, the system renders the structured values in a fixed response template.
+
+\begin{algorithm}[t]
+\caption{Generate a departure advisory}
+\label{alg:advice}
+\begin{algorithmic}[1]
+\Require Query \(q\)
+\State \(i \gets \Call{Parse}{q}\)
+\If{\Call{OutsideCoverage}{i} or \Call{MissingFields}{i}}
+  \State \Return coverage notice or clarification
+\EndIf
+\State \(x \gets \Call{RecentObservations}{i}\)
+\If{\Call{StaleOrInsufficient}{x}}
+  \State \Return explanation of data limitations
+\EndIf
+\For{\(h \in \{15,30,60\}\)}
+  \State \((\hat v_h,p_h) \gets \Call{Forecast}{x,h}\)
+\EndFor
+\State \(n \gets \Call{RetrieveNotices}{i}\)
+\State \(d \gets \Call{SelectDeparture}{i,p}\)
+\State \(r \gets \Call{Draft}{d,\hat v,p,n}\)
+\If{\(\Call{NumericCheckFails}{r,\hat v,p}\)}
+  \State \(r \gets \Call{RenderTemplate}{d,\hat v,p,n}\)
+\EndIf
+\State \Return \(r\) with applicable incidents and limitations
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsection{Illustrative Query}
+A traveler asking about a southbound trip from Taipei to Yilan on the second day of a holiday must first specify the holiday and the approximate departure window. For a supported time, the agent would identify eligible southbound segments, retrieve forecasts for candidate short-horizon departure offsets, and look up restrictions affecting the intended entry ramps. The response would cite the relevant announcement and state its period of applicability. If the query falls outside the short-horizon scope or the recent observations are unavailable, the agent would explain the limitation. This example describes the intended interaction and carries no measured performance claim.

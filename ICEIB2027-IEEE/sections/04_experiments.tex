@@ -1,0 +1,16 @@
+\section{Preliminary Evaluation}
+\subsection{Protocol}
+The feasibility study covers passenger cars on ten directional mainline segments of National Freeway No.~5. Models use 2024 training data, with 2025 as the primary test year, including eight holiday periods. A separate 2026 sample provides an out-of-year check. The 2025 evaluation is a historical replay. The proposed use of live records is assessed separately, since a retrospective replay does not capture publication delays and gaps in a live feed. The comparisons use persistence, which carries the last valid speed forward, a historical-average baseline, and a gradient-boosting model (GBM).
+
+Mean absolute error (MAE) summarizes point speed prediction. The onset-alert evaluation uses the 918 events reported for 2025. An alert is eligible when the current segment speed is at least 40~km/h. An event counts as detected if an alert occurred within the preceding 60~min. To compare methods at similar operating points, thresholds were adjusted on the evaluated data to produce common alert budgets of 0.25 and 0.50 alerts per segment-day. The resulting detection rates are retrospective and do not estimate deployment performance under a threshold set in advance.
+
+\input{tables/comparison}
+
+\subsection{Speed Forecasts}
+Table~\ref{tab:comparison} gives the available point estimates from the preliminary report. At 30~min, the GBM reduced MAE relative to persistence by 0.47~km/h on workdays and 0.18~km/h during holiday periods. At 60~min on workdays, the difference was 0.76~km/h. The report's day-level uncertainty checks found improvements over persistence on workdays and non-holiday days off across all three horizons, with a consistent pattern in the 2026 sample. Holiday improvements were smaller. The companion design analysis reports a 60-min holiday difference of approximately \(-0.04\)~km/h in 2026, with a confidence interval spanning zero \cite{dic3designnotes}. The underlying interval bounds and segment-level breakdown are pending.
+
+\subsection{Congestion Onset Alerts}
+At 0.25 alerts per segment-day, persistence detected 70\% of onsets, compared with 42\% for GBM and 36\% for the historical average. At 0.50 alerts per segment-day, the respective detection rates were 91\%, 84\%, and 61\%. Alert precision declined as the alert budget increased in the preliminary study. Accordingly, the observed reduction in speed MAE does not provide evidence of improved onset alerts. Persistence remains a necessary comparator for this task.
+
+\subsection{Limitations and Next Evaluation}
+The evaluation covers one route and one training split, and results can vary with segment selection. Abrupt incident-related speed losses remain outside the validated forecasting capability. A fuller evaluation should specify the segment list and data revision, report results by holiday and direction, and select alert thresholds on a separate calibration set. The agent should also be evaluated on whether it retrieves the correct dated notices, preserves forecast values, states limitations appropriately, and offers advice that helps a traveler decide whether to wait.

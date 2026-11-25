@@ -1,0 +1,22 @@
+\begin{figure}[t]
+\centering
+\begingroup
+\scriptsize
+\setlength{\fboxsep}{4pt}
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}c c c@{}}
+ & Traveler query & \\
+ & \(\downarrow\) & \\
+ & \fbox{Interaction interface} & \\
+ & \(\updownarrow\) & \\
+\fbox{Notice database} & \(\leftrightarrow\) \fbox{Agent} \(\leftrightarrow\) & \fbox{Forecast engine} \\
+\(\uparrow\) & & \(\uparrow\) \\
+Official notices & & \fbox{Data preparation} \\
+ & & \(\uparrow\) \\
+ & & M05A observations \\
+\end{tabular}
+\endgroup
+\caption{Five-module architecture. Boxes denote system modules. The traveler query, official notices, and M05A observations enter from outside the system.}
+\label{fig:architecture}
+\end{figure}

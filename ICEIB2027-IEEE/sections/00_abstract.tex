@@ -1,0 +1,7 @@
+\begin{abstract}
+Short-horizon speed forecasts can inform freeway departure decisions when they are presented alongside the applicable traffic controls and the limitations of the input data. We propose an explainable agent for ten directional segments on Taiwan's National Freeway No.~5. The design combines five-minute electronic toll collection speed records, a forecasting engine for 15-, 30-, and 60-min horizons, and retrieval of official control notices. The forecasting engine supplies all numeric values, while the language model interprets the request and drafts the explanation. In a preliminary evaluation with 2024 training data and a 2025 test set, gradient boosting reduced 30-min mean absolute error from 3.37 to 3.19~km/h on holidays and from 3.03 to 2.56~km/h on workdays relative to persistence. At matched alert budgets of 0.25 and 0.50 alerts per segment-day, the gradient-boosting model detected 42\% and 84\% of congestion onsets, respectively, compared with 70\% and 91\% for persistence. These results motivate evaluating speed forecasts and onset alerts as separate tasks. The end-to-end advice system remains to be evaluated.
+\end{abstract}
+
+\begin{IEEEkeywords}
+traffic forecasting, congestion onset, electronic toll collection, explainable agents, departure advice
+\end{IEEEkeywords}

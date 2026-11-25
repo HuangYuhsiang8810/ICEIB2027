@@ -1,0 +1,19 @@
+\section{Design Verification and Open Questions}
+\label{sec:verification}
+
+\subsection{Alignment of Live and Historical Records}
+A replay uses archived M05A intervals, whereas a live forecast consumes updates from the ETagPairLive feed. To put those observations on the same five-minute grid, the companion design analysis reports subtracting three minutes from the live update time before assigning its interval \cite{dic3designnotes}. If \(\tau\) is the live timestamp in minutes relative to the archive's time origin, the interval index is
+\begin{equation}
+b(\tau)=\left\lfloor\frac{\tau-3}{5}\right\rfloor .
+\end{equation}
+The analysis reports agreement for the 3,418 paired observations it checked. This is a sample-level alignment result. A live deployment still needs to monitor timestamps, stale updates, and unmatched records. In particular, assigning a bin label does not establish that the record had already been published at the time of a decision. A replay intended to estimate live performance should apply both the binning rule and the data-availability cutoff.
+
+\subsection{Evidence Checks in the Advisory}
+The companion design describes a prototype archive of 43 traffic-control notices and alignment of interchange mileposts with directional gantry pairs \cite{dic3designnotes}. A notice is relevant to a departure option only when its date, direction, and affected interchange apply to that option. For a live query, an incident feed can add time-stamped context. During historical replay, current incidents would be unsuitable evidence for a past decision.
+
+The prototype checks generated numbers against the structured tool output. A response that fails the check falls back to a deterministic template. Incident context, operating limits, and applicable holiday reminders are appended by the program. The design memo reports that approximately 86\% of generated responses passed its acceptance procedure and that the language model spontaneously added a holiday reminder in approximately 40\% of the examples. The memo does not give a denominator for these figures, so they describe the prototype checks and do not establish a general reliability rate. A numeric match also leaves open whether the number is attached to the correct forecast horizon or road segment. Evaluating those associations requires checking values together with their units, segment identifiers, and timestamps.
+
+\subsection{Questions for a Prospective Study}
+Three decisions remain open. First, a live data check should quantify the effect of missing or delayed reports on the age and completeness of the recent observation window, especially at the beginning of congestion. Second, prospective alert testing should fix thresholds before the evaluation period and report detection, alert precision, and lead time separately by direction and day type. This would show whether short-horizon risk estimates are useful under a realistic alert budget. Third, a departure-advice evaluation should compare leaving now with delaying departure, record whether the vehicle could use the intended ramp, and measure the time until arrival from the original decision point. That outcome includes the wait itself. It can distinguish better advice from a forecast that only identifies a later period with higher traffic speeds.
+
+The proposed agent can still give an evidence-based account of current and forecast conditions while these questions remain open. Its advisory should identify the data time and horizon, cite the official restriction when applicable, and state when the evidence does not support a departure recommendation.

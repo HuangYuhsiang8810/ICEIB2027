@@ -1,0 +1,9 @@
+\section{Related Work}
+\subsection{Short-Horizon Traffic Forecasting}
+Historical averages provide a calendar-based reference, while persistence tests how much a model adds beyond the most recent observed speed. Deep spatiotemporal models offer a different approach. For example, the diffusion convolutional recurrent neural network models a road network as a directed graph and learns spatial and temporal dependencies jointly \cite{li2018dcrnn}. In this study, persistence and historical averages are the baseline comparators, and gradient boosting is the candidate forecast model. Their relative performance is evaluated separately for point speed prediction and onset alerts.
+
+\subsection{Forecast Explanations and Traffic Agents}
+Explainable Traffic Prediction with Large Language Models (xTP-LLM) studies traffic-flow forecasting with contextual inputs and text explanations \cite{xtpllm}. We address a route-level decision for a specific freeway, using a numerical forecast tool and a source of current or historical traffic-control notices. The forecasting engine, decision rule, and notice retriever expose their outputs to the agent so that a response can be checked against the values and sources that produced it.
+
+\subsection{Official Traveler Information}
+The Freeway Bureau's Highway 1968 app provides travel-time estimates for trips up to 100 days ahead and recommends departure times for supported queries \cite{fwb1968}. Its published description establishes the service scope. The evaluation in this paper compares models against two baselines on the same short-horizon speed and onset tasks. It does not estimate relative accuracy against the official app.
